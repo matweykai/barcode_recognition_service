@@ -1,0 +1,5 @@
+outs:
+- md5: 1bb6bee7a71cd5513e481a1ce0c74072
+  size: 12238125
+  hash: md5
+  path: yolo_8n_994.onnx
