@@ -9,6 +9,7 @@ setup:
 	$(ACTIVATE_VENV) && \
 
 	pip install -r requirements.txt
+	dvc pull
 
 
 check_linter:
