@@ -15,3 +15,8 @@ setup:
 check_linter:
 	$(ACTIVATE_VENV)
 	flake8 src
+
+
+run_tests:
+	$(ACTIVATE_VENV)
+	$(CALL_CMD) -m pytest tests
