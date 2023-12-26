@@ -24,7 +24,7 @@ pull_model:
   <<: *ssh_key_template
   stage: prepare
   script:
-    - pip install dvc[ssh]==3.22.0 pygit2==1.13.0 pathspec==0.11.2
+    - pip install dvc[ssh]==3.36.1 pygit2==1.13.3 pathspec==0.12.1
     - dvc pull weights/yolo_8n_994.onnx.dvc
   artifacts:
     paths:
