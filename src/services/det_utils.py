@@ -3,7 +3,8 @@ import numpy as np
 
 def rescale_boxes(
     predictions: np.ndarray,
-    img_size: tuple,
+    old_size: tuple,
+    new_size: tuple,
 ) -> np.ndarray:
     """Rescales YOLO boxes to the original image size
 
@@ -14,17 +15,38 @@ def rescale_boxes(
     Returns:
         np.ndarray: rescaled boxes
     """
-    width, height = img_size
+    width_ratio = new_size[0] / old_size[0]
+    height_ratio = new_size[1] / old_size[1]
 
-    scale_vector = np.array([width, height, width, height])
+    # scale_vector = np.array([width_ratio, height_ratio, width_ratio, height_ratio, 1])
 
-    mod_pred = np.zeros_like(predictions)
-    mod_pred[:, 0] = mod_pred[:, 0] - mod_pred[:, 2] / 2
-    mod_pred[:, 1] = mod_pred[:, 1] - mod_pred[:, 3] / 2
-    mod_pred[:, 2] = mod_pred[:, 0] + mod_pred[:, 2] / 2
-    mod_pred[:, 3] = mod_pred[:, 1] + mod_pred[:, 3] / 2
+    mod_pred = predictions.copy()
+    mod_pred[:, [0, 2]] *= width_ratio
+    mod_pred[:, [1, 3]] *= height_ratio
 
-    return mod_pred * scale_vector
+    return mod_pred
+
+
+def convert_xywh_to_xyxy(inp_pred: np.ndarray) -> np.ndarray:
+    """Converts xywh predictions to xyxy format
+
+    Args:
+        inp_pred (np.ndarray): input detections in xywh format
+
+    Returns:
+        np.ndarray: converted boxes to format xyxy
+    """
+    conv_pred = np.empty_like(inp_pred)
+
+    dw = inp_pred[:, 2] / 2  # half-width
+    dh = inp_pred[:, 3] / 2  # half-height
+    conv_pred[..., 0] = inp_pred[..., 0] - dw  # top left x
+    conv_pred[..., 1] = inp_pred[..., 1] - dh  # top left y
+    conv_pred[..., 2] = inp_pred[..., 0] + dw  # bottom right x
+    conv_pred[..., 3] = inp_pred[..., 1] + dh  # bottom right y
+    conv_pred[..., 4] = inp_pred[..., 4]
+
+    return conv_pred
 
 
 def non_max_suppression(
@@ -53,14 +75,14 @@ def non_max_suppression(
 
     keep = []
 
-    while order:
+    while order.shape[0] > 0:
         cur_ind = order[-1]
 
         keep.append(predictions[cur_ind])
 
         order = order[:-1]
 
-        if order:
+        if order.shape[0] == 0:
             break
 
         # Find boxes intersection

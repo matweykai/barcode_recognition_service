@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 
-from services.det_utils import non_max_suppression
+from src.services.det_utils import non_max_suppression
 
 
 @pytest.mark.parametrize(
@@ -13,8 +13,6 @@ def test_nms_non_overlapping(thres: float):
     expected_boxes = [[0, 1, 1, 2, 0.9], [1, 0, 2, 1, 0.85], [0, 0, 1, 1, 0.8], [1, 1, 2, 2, 0.7]]
 
     result = non_max_suppression(inp_boxes, thres)
-
-    # print(result)
 
     assert (np.array(result) == np.array(expected_boxes)).all()
 
