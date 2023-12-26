@@ -19,8 +19,20 @@ class BarcodeRecognizer:
         self._img_size = (inp_shape[3], inp_shape[2])
         self._vocab = '0123456789'
 
-    def decode(self, inp_img: np.ndarray) -> np.ndarray:
-        pass
+    def decode(self, inp_img: np.ndarray) -> str:
+        """Decodes barcode from image
+
+        Args:
+            inp_img (np.ndarray): raw image in BGR format
+
+        Returns:
+            str: decoded barcode
+        """
+        prep_img = self._preprocess(inp_img)
+
+        model_logit = self.session.run(None, {'input': prep_img})[0]
+
+        return self._postprocess(model_logit)
 
     def _preprocess(self, raw_img: np.ndarray) -> np.ndarray:
         """Preprocess raw BGR image and make it ready for the inference
