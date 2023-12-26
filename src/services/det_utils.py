@@ -18,8 +18,6 @@ def rescale_boxes(
     width_ratio = new_size[0] / old_size[0]
     height_ratio = new_size[1] / old_size[1]
 
-    # scale_vector = np.array([width_ratio, height_ratio, width_ratio, height_ratio, 1])
-
     mod_pred = predictions.copy()
     mod_pred[:, [0, 2]] *= width_ratio
     mod_pred[:, [1, 3]] *= height_ratio

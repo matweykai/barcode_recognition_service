@@ -68,7 +68,8 @@ class BarcodeDetector:
         prep_img = np.transpose(prep_img, (2, 0, 1))
 
         # Normalization
-        prep_img = (prep_img / 255.).astype(np.float32)
+        max_pixel_val = 255.0
+        prep_img = (prep_img / max_pixel_val).astype(np.float32)
 
         return np.expand_dims(prep_img, axis=0)
 
@@ -98,22 +99,3 @@ class BarcodeDetector:
             res_pred = rescale_boxes(res_pred, self._img_size, inp_img_size)
 
         return res_pred
-    
-
-if __name__ == '__main__':
-    detector = BarcodeDetector('/home/matwey_i/temp/pr_2/service/weights/yolo_8n_994.onnx', 0.6, 0.6)
-
-    test_img = cv2.imread('/home/matwey_i/temp/pr_2/service/tests/images/test_img.jpg')
-
-    pred = detector.detect(test_img)
-
-    # test_img = cv2.resize(test_img, (640, 640))
-
-    print(pred)
-
-    for item in pred:
-        cv2.rectangle(test_img, (int(item[0]), int(item[1])), (int(item[2]), int(item[3])), (0, 0, 255), 2)
-        print(item)
-
-    cv2.imwrite('temp_pred.jpg', test_img)
-    
