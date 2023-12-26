@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from onnxruntime import InferenceSession
 
-from src.services.rec_utils import resize_pad
+from src.services.rec_utils import resize_pad, matrix_to_string
 
 
 class BarcodeRecognizer:
@@ -17,6 +17,7 @@ class BarcodeRecognizer:
 
         inp_shape = self.session.get_inputs()[0].shape
         self._img_size = (inp_shape[3], inp_shape[2])
+        self._vocab = '0123456789'
 
     def decode(self, inp_img: np.ndarray) -> np.ndarray:
         pass
@@ -43,5 +44,13 @@ class BarcodeRecognizer:
 
         return np.expand_dims(prep_img, axis=0)
 
-    def _postprocess(self, model_pred: np.ndarray) -> np.ndarray:
-        pass
+    def _postprocess(self, model_pred: np.ndarray) -> str:
+        """Postprocessing of the CRNN model output
+
+        Args:
+            model_pred (np.ndarray): raw CRNN predictions
+
+        Returns:
+            str: decoded barcode
+        """
+        return matrix_to_string(model_pred, self._vocab)[0][0]
