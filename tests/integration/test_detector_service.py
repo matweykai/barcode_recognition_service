@@ -6,7 +6,6 @@ from src.services.detector import BarcodeDetector
 
 def test_real_img_inference():
     test_img = cv2.imread('tests/images/test_img.jpg')
-    # ideal_pred = np.array([497, 996, 443, 308])
     ideal_pred = np.array([275,  842,  718, 1150])
 
 
