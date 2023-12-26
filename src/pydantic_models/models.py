@@ -10,4 +10,4 @@ class BoundingBox(BaseModel):
 
 class BarcodeDetection(BaseModel):
     bbox: BoundingBox
-    value: str
+    text: str

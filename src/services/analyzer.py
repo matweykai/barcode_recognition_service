@@ -1,6 +1,4 @@
 import numpy as np
-import cv2
-from voluptuous import extra
 
 from src.pydantic_models.models import BarcodeDetection, BoundingBox
 from src.services.detector import BarcodeDetector
@@ -37,11 +35,11 @@ class BarcodeAnalyzer:
 
         barcode_detections = self.detector.detect(raw_img)
 
-        for detection in barcode_detections:
-            x_min = max(0, int(detection[0]) - self.extra_crop_val)
-            y_min = max(0, int(detection[1]) - self.extra_crop_val)
-            x_max = min(raw_img.shape[1], int(detection[2]) + self.extra_crop_val)
-            y_max = min(raw_img.shape[0], int(detection[3]) + self.extra_crop_val)
+        for x_min, y_min, x_max, y_max in barcode_detections:
+            x_min = max(0, int(x_min) - self.extra_crop_val)
+            y_min = max(0, int(y_min) - self.extra_crop_val)
+            x_max = min(raw_img.shape[1], int(x_max) + self.extra_crop_val)
+            y_max = min(raw_img.shape[0], int(y_max) + self.extra_crop_val)
 
             img_crop = raw_img[y_min: y_max, x_min: x_max, :]
 
@@ -56,7 +54,7 @@ class BarcodeAnalyzer:
 
             barcodes_list.append(BarcodeDetection(
                 bbox=bbox,
-                value=decoded_text,
+                text=decoded_text,
             ))
 
         return barcodes_list
