@@ -1,0 +1,13 @@
+barcode_detector:
+  onnx_weights_path: 'weights/yolo_8n_994.onnx'
+  iou_threshold: 0.6
+  conf_threshold: 0.6
+
+barcode_recognizer:
+  onnx_weights_path: 'weights/eff_net_b5_loss=0.196.onnx'
+
+app_settings:
+  host: '0.0.0.0'
+  port: 8000
+
+extra_crop_val: 10
