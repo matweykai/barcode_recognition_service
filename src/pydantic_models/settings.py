@@ -12,6 +12,15 @@ class RecognizerSettings(BaseModel):
     onnx_weights_path: str
 
 
+class VisualizerSettings(BaseModel):
+    box_color: tuple[int, int, int]
+    box_thickness: int
+    text_color: tuple[int, int, int]
+    text_font_scale: float
+    text_thickness: int
+    text_y_shift: int
+
+
 class AppSettings(BaseModel):
     host: str
     port: int
@@ -20,6 +29,7 @@ class AppSettings(BaseModel):
 class Settings(BaseModel):
     barcode_detector: DetectorSettings
     barcode_recognizer: RecognizerSettings
+    barcode_visualizer: VisualizerSettings
     app_settings: AppSettings
     extra_crop_val: int = 10
 
