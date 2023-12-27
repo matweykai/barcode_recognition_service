@@ -35,7 +35,7 @@ class BarcodeAnalyzer:
 
         barcode_detections = self.detector.detect(raw_img)
 
-        for x_min, y_min, x_max, y_max in barcode_detections:
+        for x_min, y_min, x_max, y_max, _ in barcode_detections:
             x_min = max(0, int(x_min) - self.extra_crop_val)
             y_min = max(0, int(y_min) - self.extra_crop_val)
             x_max = min(raw_img.shape[1], int(x_max) + self.extra_crop_val)
