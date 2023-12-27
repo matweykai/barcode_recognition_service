@@ -16,5 +16,7 @@ COPY setup.cfg setup.cfg
 COPY tests tests
 COPY src src
 COPY Makefile Makefile
+COPY app.py app.py
+COPY config config
 
 CMD python app.py
