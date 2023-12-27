@@ -9,6 +9,7 @@ stages:
   - build
   - lint
   - tests
+  - deploy
 
 .ssh_key_template: &ssh_key_template
   before_script:
@@ -74,3 +75,24 @@ run_tests:
     - docker run ${DOCKER_IMAGE}:${DOCKER_TAG} bash -c 'make run_tests'
   needs:
     - build_image
+
+deploy_model:
+  stage: deploy
+  variables:
+    ANSIBLE_HOST_KEY_CHECKING: "false"
+  <<: *ssh_key_template
+  script:
+    - python3 -m pip install ansible==6.0.0
+    - make deploy DOCKER_IMAGE=${DOCKER_IMAGE} DOCKER_TAG=${DOCKER_TAG}
+  when: manual
+
+destroy:
+  stage: deploy
+  variables:
+    ANSIBLE_HOST_KEY_CHECKING: "false"
+  <<: *ssh_key_template
+  script:
+    - python3 -m pip install ansible==6.0.0
+    - make destroy
+
+  when: manual
