@@ -6,7 +6,7 @@ IMAGE={{ docker_image }}:{{ docker_tag }}
 
 docker run \
     -d \
-    -p {{ service_port }}:5000 \
+    -p {{ service_port }}:8000 \
     --name={{ container_name }} \
     --restart always \
     ${IMAGE}
