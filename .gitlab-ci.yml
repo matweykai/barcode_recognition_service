@@ -8,6 +8,8 @@ stages:
   - prepare
   - build
   - lint
+  - tests
+  - deploy
 
 .ssh_key_template: &ssh_key_template
   before_script:
@@ -23,8 +25,9 @@ pull_model:
   <<: *ssh_key_template
   stage: prepare
   script:
-    - pip install dvc[ssh]==3.22.0 pygit2==1.13.0 pathspec==0.11.2
-    - dvc pull -R weights.dvc
+    - pip install dvc[ssh]==3.36.1 pygit2==1.13.3 pathspec==0.12.1
+    - dvc pull weights/yolo_8n_994.onnx.dvc
+    - dvc pull weights/eff_net_b5_loss=0.196.onnx.dvc
   artifacts:
     paths:
       - weights/*.onnx
@@ -62,3 +65,34 @@ lint:
     - docker run ${DOCKER_IMAGE}:${DOCKER_TAG} bash -c 'make check_linter'
   needs:
     - build_image
+
+run_tests:
+  stage: tests
+  <<: *docker_common
+  script:
+    - *docker_login
+    - docker pull ${DOCKER_IMAGE}:${DOCKER_TAG}
+    - docker run ${DOCKER_IMAGE}:${DOCKER_TAG} bash -c 'make run_tests'
+  needs:
+    - build_image
+
+deploy_model:
+  stage: deploy
+  variables:
+    ANSIBLE_HOST_KEY_CHECKING: "false"
+  <<: *ssh_key_template
+  script:
+    - python3 -m pip install ansible==6.0.0
+    - make deploy DOCKER_IMAGE=${DOCKER_IMAGE} DOCKER_TAG=${DOCKER_TAG}
+  when: manual
+
+destroy:
+  stage: deploy
+  variables:
+    ANSIBLE_HOST_KEY_CHECKING: "false"
+  <<: *ssh_key_template
+  script:
+    - python3 -m pip install ansible==6.0.0
+    - make destroy
+
+  when: manual
